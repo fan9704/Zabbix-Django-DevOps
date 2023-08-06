@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var ws = new WebSocket(ws_scheme + "://" + window.location.host + window.location.pathname)
+        console.log(ws);
+        ws.onmessage = function(message) {
+            var data = JSON.parse(message.data);
+            if (data["當前狀態"] == 'problem') {
+                var subject = '<br>故障!,伺服器:' +
+                    data["警告主機"] + "發生:" +
+                    data["警告訊息"] + "故障!<br>";
+            } else {
+                var subject = '<br>故障!,伺服器:' +
+                    data["警告主機"] + "發生:" +
+                    data["警告訊息"] + "已經恢復!<br>";
+            }
+            content = new Array();
+            $.each(data, function(k, v) {
+                content.push("<b>" + k + "</b>" + v)
+            })
+            var data = subject + content.join("<br>")
+                // $('#notify')[0].play();
+            notify("warning", "glyphicon glyphicon-danger", data)
+        }
+    </script>
+</body>
+
+</html>
